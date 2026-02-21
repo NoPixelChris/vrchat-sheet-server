@@ -8,7 +8,7 @@ const SHEET_URL = process.env.SHEET_URL;
 
 app.get("/sheet.png", async (req, res) => {
   try {
-    const csvText = await (await fetch(https://docs.google.com/spreadsheets/d/14ZcaC1QSVh2-XHxTAWE9_fuZc2PkCCCjN6rOKMHYkk4/export?format=csv)).text();
+    const csvText = await (await fetch(SHEET_URL)).text();
     const records = parse(csvText);
 
     const rowHeight = 40;
@@ -44,5 +44,6 @@ app.get("/sheet.png", async (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log("Server running"));
+
 
 
