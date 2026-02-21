@@ -1,30 +1,27 @@
 import express from "express";
 import fetch from "node-fetch";
-import { createCanvas } from "canvas";
 import { parse } from "csv-parse/sync";
+import PImage from "pureimage";
+import fs from "fs";
 
 const app = express();
-
-const SHEET_URL = process.env.SHEET_URL; // we set this on Railway
+const SHEET_URL = process.env.SHEET_URL;
 
 app.get("/sheet.png", async (req, res) => {
   try {
-    const response = await fetch(SHEET_URL);
-    const csvText = await response.text();
-
+    const csvText = await (await fetch(SHEET_URL)).text();
     const records = parse(csvText);
 
     const rowHeight = 40;
     const colWidth = 300;
-
     const rows = records.length;
     const cols = records[0].length;
 
-    const canvas = createCanvas(cols * colWidth, rows * rowHeight);
-    const ctx = canvas.getContext("2d");
+    const img = PImage.make(cols * colWidth, rows * rowHeight);
+    const ctx = img.getContext("2d");
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, img.width, img.height);
 
     ctx.fillStyle = "#000000";
     ctx.font = "20px Arial";
@@ -36,9 +33,10 @@ app.get("/sheet.png", async (req, res) => {
     }
 
     res.setHeader("Content-Type", "image/png");
-    canvas.createPNGStream().pipe(res);
+    PImage.encodePNGToStream(img, res);
 
   } catch (err) {
+    console.error(err);
     res.status(500).send("Error generating image");
   }
 });
