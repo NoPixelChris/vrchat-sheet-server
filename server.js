@@ -2,7 +2,6 @@ import express from "express";
 import fetch from "node-fetch";
 import { parse } from "csv-parse/sync";
 import PImage from "pureimage";
-import fs from "fs";
 
 const app = express();
 const SHEET_URL = process.env.SHEET_URL;
@@ -20,9 +19,11 @@ app.get("/sheet.png", async (req, res) => {
     const img = PImage.make(cols * colWidth, rows * rowHeight);
     const ctx = img.getContext("2d");
 
+    // Background
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, img.width, img.height);
 
+    // Text
     ctx.fillStyle = "#000000";
     ctx.font = "20px Arial";
 
